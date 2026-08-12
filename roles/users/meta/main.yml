@@ -17,8 +17,8 @@ galaxy_info:
     - sudo
     - accounts
 
-    - mps-users
+    - odem-users
 dependencies:
-  - role: mps.base.assert_debian13
-  - role: mps.users.groups
-  - role: mps.base.identity
+  - role: odem.base.assert_debian13
+  - role: odem.users.groups
+  - role: odem.base.identity

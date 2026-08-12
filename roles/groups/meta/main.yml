@@ -16,7 +16,7 @@ galaxy_info:
     - groups
     - accounts
 
-    - mps-users
+    - odem-users
 dependencies:
-  - role: mps.base.assert_debian13
-  - role: mps.base.identity
+  - role: odem.base.assert_debian13
+  - role: odem.base.identity

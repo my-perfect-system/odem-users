@@ -1,5 +1,5 @@
 ---
-# Shared identity model (consumed by all mps.users roles)
+# Shared identity model (consumed by all odem.users roles)
 
 # Mapping of Cmnd_Alias names to lists of command patterns rendered into
 # /etc/sudoers.d/00_macros.

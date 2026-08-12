@@ -9,7 +9,7 @@ argument_specs:
       fields and creates them.
     - Also accepts an explicit C(groups_list) list of dicts for standalone group management
       (with state, gid, system).
-    - This role declares C(mps.users.users) as a dependency, so invoking C(mps.users.groups)
+    - This role declares C(odem.users.users) as a dependency, so invoking C(odem.users.groups)
       automatically runs the users role first.
     options:
       groups_list:

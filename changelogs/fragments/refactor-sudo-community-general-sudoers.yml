@@ -3,7 +3,7 @@
 # Compiles into changelogs/changelog.yaml at release time.
 minor_changes:
   - |
-    `mps.users.sudo` reworked to use `community.general.sudoers` (one module call per user, validating via the module's internal `visudo` invocation) instead of templating `/etc/sudoers.d/<name>` + manual `validate: visudo -cf %s`.
+    `odem.users.sudo` reworked to use `community.general.sudoers` (one module call per user, validating via the module's internal `visudo` invocation) instead of templating `/etc/sudoers.d/<name>` + manual `validate: visudo -cf %s`.
   - |
     Each user's `sudo.macros` is now resolved inline to a flat command list per user (`entity.sudo.macros | map('extract', sudo_macros) | flatten | unique`) — the `Cmnd_Alias` macro file indirection is gone.
   - |

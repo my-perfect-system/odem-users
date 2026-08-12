@@ -1,5 +1,5 @@
 ---
-namespace: mps
+namespace: odem
 name: users
 version: 0.3.1
 readme: README.md
@@ -14,11 +14,11 @@ tags:
   - ssh
   - sudo
   - accounts
-  - mps
-repository: https://github.com/my-perfect-system/mps-users
-documentation: https://github.com/my-perfect-system/mps-users
-homepage: https://github.com/my-perfect-system/mps-users
-issues: https://github.com/my-perfect-system/mps-users/issues
+  - odem
+repository: https://github.com/my-perfect-system/odem-users
+documentation: https://github.com/my-perfect-system/odem-users
+homepage: https://github.com/my-perfect-system/odem-users
+issues: https://github.com/my-perfect-system/odem-users/issues
 build_ignore:
   .ansible-lint
   .yamllint
@@ -28,6 +28,6 @@ build_ignore:
   - "*.tar.gz"
   - .ansible
 dependencies:
-  mps.base: ">=0.1.0"
+  odem.base: ">=0.1.0"
   ansible.posix: ">=1.0.0"
   community.general: ">=1.0.0"

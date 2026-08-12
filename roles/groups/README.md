@@ -1,10 +1,10 @@
 ---
-namespace: mps
+namespace: odem
 collection: users
 role: groups
 ---
 
-# `mps.users.groups`
+# `odem.users.groups`
 
 Main entry point for the groups role.
 
@@ -17,15 +17,15 @@ Main entry point for the groups role.
 
 ## Dependencies
 
-- `mps.base.assert_debian13`
-- `mps.base.identity`
+- `odem.base.assert_debian13`
+- `odem.base.identity`
 
 ## Example usage
 
 ```yaml
 - hosts: all
   roles:
-    - mps.users.groups
+    - odem.users.groups
 ```
 
 ## Role metadata

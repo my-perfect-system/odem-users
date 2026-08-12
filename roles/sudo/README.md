@@ -1,10 +1,10 @@
 ---
-namespace: mps
+namespace: odem
 collection: users
 role: sudo
 ---
 
-# `mps.users.sudo`
+# `odem.users.sudo`
 
 Main entry point for the sudo role.
 
@@ -16,15 +16,15 @@ Main entry point for the sudo role.
 
 ## Dependencies
 
-- `mps.base.assert_debian13`
-- `mps.base.identity`
+- `odem.base.assert_debian13`
+- `odem.base.identity`
 
 ## Example usage
 
 ```yaml
 - hosts: all
   roles:
-    - mps.users.sudo
+    - odem.users.sudo
 ```
 
 ## Role metadata

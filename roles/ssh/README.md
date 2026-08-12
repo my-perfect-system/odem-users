@@ -1,24 +1,24 @@
 ---
-namespace: mps
+namespace: odem
 collection: users
 role: ssh
 ---
 
-# `mps.users.ssh`
+# `odem.users.ssh`
 
 Main entry point for the ssh role.
 
 ## Dependencies
 
-- `mps.base.assert_debian13`
-- `mps.base.identity`
+- `odem.base.assert_debian13`
+- `odem.base.identity`
 
 ## Example usage
 
 ```yaml
 - hosts: all
   roles:
-    - mps.users.ssh
+    - odem.users.ssh
 ```
 
 ## Role metadata

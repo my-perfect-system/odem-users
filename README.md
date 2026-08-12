@@ -1,13 +1,13 @@
-# `mps.users` Ansible Collection
+# `odem.users` Ansible Collection
 
 User accounts, groups, SSH keys, sudoers management.
 
 ## Galaxy metadata
 
-- **namespace**: `mps`
+- **namespace**: `odem`
 - **name**: `users`
 - **version**: `0.3.1`
-- **dependencies**: `mps.base`, `ansible.posix`, `community.general`
+- **dependencies**: `odem.base`, `ansible.posix`, `community.general`
 
 See [`galaxy.yml`](galaxy.yml) for the canonical values.
 
@@ -15,20 +15,20 @@ See [`galaxy.yml`](galaxy.yml) for the canonical values.
 
 | Role | Purpose |
 |---|---|
-| [`mps.users.users`](roles/users/README.md) | Create / remove Unix user accounts. Root special-path handling via `chpasswd` / `chsh` / `chfn` / `chage`. |
-| [`mps.users.groups`](roles/groups/README.md) | Add / remove Unix groups; flat list of referenced groups built per-user. |
-| [`mps.users.ssh`](roles/ssh/README.md) | Deploy SSH keys + authorized_keys per user. |
-| [`mps.users.sudo`](roles/sudo/README.md) | Per-user sudoers management via `community.general.sudoers`. |
+| [`odem.users.users`](roles/users/README.md) | Create / remove Unix user accounts. Root special-path handling via `chpasswd` / `chsh` / `chfn` / `chage`. |
+| [`odem.users.groups`](roles/groups/README.md) | Add / remove Unix groups; flat list of referenced groups built per-user. |
+| [`odem.users.ssh`](roles/ssh/README.md) | Deploy SSH keys + authorized_keys per user. |
+| [`odem.users.sudo`](roles/sudo/README.md) | Per-user sudoers management via `community.general.sudoers`. |
 
 ## Required catalog input
 
-Every role consumes the per-user data model produced by `mps.base.identity`.
+Every role consumes the per-user data model produced by `odem.base.identity`.
 User opt-in is via the `user_roles.<key>: true` flag in `users_catalog`.
 
 ## Installation
 
 ```bash
-ansible-galaxy collection install mps.users
+ansible-galaxy collection install odem.users
 ansible-galaxy collection install community.general
 ```
 
@@ -46,11 +46,11 @@ ansible-galaxy collection install community.general
           users_backup: true
         shell: /bin/bash
   roles:
-    - mps.base.identity
-    - mps.users.users
-    - mps.users.groups
-    - mps.users.ssh
-    - mps.users.sudo
+    - odem.base.identity
+    - odem.users.users
+    - odem.users.groups
+    - odem.users.ssh
+    - odem.users.sudo
 ```
 
 ## Documentation

@@ -11,9 +11,9 @@ argument_specs:
     - 'Missing catalog entries fail the role for entries with C(state: present).'
     - 'Entries with C(state: absent) do not require a catalog entry; the id is used
       as the username for deletion.'
-    - SSH key deployment is handled by the separate C(mps.users.ssh) role, which reads
+    - SSH key deployment is handled by the separate C(odem.users.ssh) role, which reads
       the same C(users_catalog)/C(users_list).
-    - Sudoers management is handled by the separate C(mps.users.sudo) role, which
+    - Sudoers management is handled by the separate C(odem.users.sudo) role, which
       reads the same C(users_catalog)/C(users_list).
     options:
       users_enable_print_passwords_plaintext:
