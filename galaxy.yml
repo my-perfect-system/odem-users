@@ -20,6 +20,8 @@ documentation: https://github.com/my-perfect-system/mps-users
 homepage: https://github.com/my-perfect-system/mps-users
 issues: https://github.com/my-perfect-system/mps-users/issues
 build_ignore:
+  .ansible-lint
+  .yamllint
   - .git
   - .github
   - .gitignore
