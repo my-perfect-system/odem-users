@@ -7,6 +7,8 @@
     fail_msg: "This role supports Debian 13 (trixie) only"
     quiet: true
 
+- name: USERS - Compute per-user data
+  ansible.builtin.include_tasks: compute.yml
 - name: USERS - Create users
   ansible.builtin.include_tasks: add.yml
 
