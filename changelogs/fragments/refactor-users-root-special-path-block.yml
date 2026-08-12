@@ -1,0 +1,7 @@
+---
+# Fragment for the refactor pass.
+# Compiles into changelogs/changelog.yaml at release time.
+minor_changes:
+  - |
+    Root-account special-path work in `mps.users.users/tasks/add.yml` consolidated under a single `block:` with one shared `when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0` guard. Inner `when:` blocks (value-changed checks for `chpasswd`/`chsh`/`chfn`/`chage`) preserved.
+
