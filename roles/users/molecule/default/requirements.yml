@@ -1,0 +1,6 @@
+---
+# Galaxy collections required by this role.
+# Generated.
+collections:
+  - name: mps.base
+  - name: mps.users
