@@ -50,7 +50,7 @@ argument_specs:
             choices: [present, absent]
             default: present
             description: Whether the user should exist on this host.
-      users_print_passwords_plaintext:
+      users_enable_print_passwords_plaintext:
         type: bool
         default: false
         description: Print generated passwords and hashes to stdout (debug only).

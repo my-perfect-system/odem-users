@@ -10,12 +10,12 @@
   loop: "{{ groups_users_present | default([]) }}"
   loop_control:
     label: "{{ item.name | default('unnamed') }}"
-  when: groups_extract_from_users | bool
+  when: groups_enable_extract_from_users | bool
 
 - name: GROUPS - Deduplicate extracted group names
   ansible.builtin.set_fact:
     groups_from_users: "{{ groups_from_users | default([]) | unique }}"
-  when: groups_extract_from_users | bool
+  when: groups_enable_extract_from_users | bool
 
 - name: GROUPS - Split explicit list into present and absent
   ansible.builtin.set_fact:

@@ -12,4 +12,4 @@ groups_list: []
 
 # When true, the role also scans users_list and extracts each user's
 # `group` and `groups` fields as groups to ensure-present.
-groups_extract_from_users: true
+groups_enable_extract_from_users: true

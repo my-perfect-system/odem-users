@@ -33,7 +33,7 @@
         Plaintext : '{{ entity.password_plain }}'
         Hash      : '{{ entity.password_hash }}'
   loop: "{{ users_with_passwords }}"
-  when: users_print_passwords_plaintext
+  when: users_enable_print_passwords_plaintext
   loop_control:
     label: "{{ entity.name }}"
     loop_var: entity

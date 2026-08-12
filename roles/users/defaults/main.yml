@@ -1,6 +1,6 @@
 ---
 # Print passwords being generated in plain text to stdout
-users_print_passwords_plaintext: false
+users_enable_print_passwords_plaintext: false
 
 # Identity catalog: dict keyed by a free-form unique id, holding all identity
 # fields (name, uid, group, shell, home, password, ssh_keys, sudo, ...).

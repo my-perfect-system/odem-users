@@ -39,7 +39,7 @@ argument_specs:
           system:
             type: bool
             description: Create as system group.
-      groups_extract_from_users:
+      groups_enable_extract_from_users:
         type: bool
         default: true
         description: When true, scan resolved users and extract each user's C(group) and C(groups) fields as groups to ensure-present.
