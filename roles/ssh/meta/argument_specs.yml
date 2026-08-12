@@ -1,18 +1,10 @@
----
 argument_specs:
   main:
     short_description: Main entry point for the ssh role.
     description:
-      - Deploys C(~/.ssh) directories, SSH private key files, and C(authorized_keys) for users in C(users_list) whose state is C(present).
-      - Reads C(users_catalog) and C(users_list); resolves catalog references (same as the users role).
-      - Run the users role first so that home directories exist.
-    options:
-      users_catalog:
-        type: dict
-        default: {}
-        description: Identity catalog keyed by unique id (see the users role).
-      users_list:
-        type: list
-        default: []
-        description: Assignment list of name + state pairs referencing users_catalog entries by their unique id (see the users role).
-        elements: dict
+    - Deploys C(~/.ssh) directories, SSH private key files, and C(authorized_keys)
+      for users in C(users_list) whose state is C(present).
+    - Reads C(users_catalog) and C(users_list); resolves catalog references (same
+      as the users role).
+    - Run the users role first so that home directories exist.
+    options: {}

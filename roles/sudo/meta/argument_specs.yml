@@ -1,24 +1,18 @@
----
 argument_specs:
   main:
     short_description: Main entry point for the sudo role.
     description:
-      - Renders C(/etc/sudoers.d/00_macros) from C(sudo_macros).
-      - Renders per-user C(/etc/sudoers.d/<name>) files for users in C(users_list) whose state is C(present) and which declare a C(sudo) sub-option.
-      - Manages membership in the C(sudo) system group via C(sudo.group) in the catalog (adds user when true, removes when false).
-      - Removes per-user sudoers files for users whose state is C(absent).
-      - Reads C(users_catalog) and C(users_list); resolves catalog references (same as the users role).
+    - Renders C(/etc/sudoers.d/00_macros) from C(sudo_macros).
+    - Renders per-user C(/etc/sudoers.d/<name>) files for users in C(users_list) whose
+      state is C(present) and which declare a C(sudo) sub-option.
+    - Manages membership in the C(sudo) system group via C(sudo.group) in the catalog
+      (adds user when true, removes when false).
+    - Removes per-user sudoers files for users whose state is C(absent).
+    - Reads C(users_catalog) and C(users_list); resolves catalog references (same
+      as the users role).
     options:
-      users_catalog:
-        type: dict
-        default: {}
-        description: Identity catalog keyed by unique id (see the users role).
-      users_list:
-        type: list
-        default: []
-        description: Assignment list of name + state pairs referencing users_catalog entries by their unique id (see the users role).
-        elements: dict
       sudo_macros:
         type: dict
         required: false
-        description: Mapping of Cmnd_Alias names to lists of command patterns rendered into C(/etc/sudoers.d/00_macros)
+        description: Mapping of Cmnd_Alias names to lists of command patterns rendered
+          into C(/etc/sudoers.d/00_macros)

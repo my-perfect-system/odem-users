@@ -1,6 +1,4 @@
 ---
-# Shared identity model (consumed by all mps.users roles)
-
 # Explicit groups list. Each entry is a dict:
 #   name:    str (required)
 #   state:   str (present|absent, default present)
