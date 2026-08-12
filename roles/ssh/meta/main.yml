@@ -18,4 +18,5 @@ galaxy_info:
 
     - mps-users
 dependencies:
+  - role: mps.base.assert_debian13
   - role: mps.base.identity

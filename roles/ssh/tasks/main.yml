@@ -1,12 +1,4 @@
 ---
-- name: Assert Debian 13 target
-  ansible.builtin.assert:
-    that:
-      - ansible_facts["distribution"] == "Debian"
-      - ansible_facts["distribution_major_version"] | int == 13
-    fail_msg: "This role supports Debian 13 (trixie) only"
-    quiet: true
-
 - name: Resolve authorized_keys per user
   ansible.builtin.include_tasks: facts.yml
   loop: "{{ identity_users_present | selectattr('authorized_keys', 'defined') | list }}"
