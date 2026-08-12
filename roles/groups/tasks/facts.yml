@@ -1,10 +1,10 @@
 ---
-- name: GROUPS - Split explicit list into present and absent
+- name: Split groups_list into explicit present and absent
   ansible.builtin.set_fact:
     groups_explicit_present: "{{ groups_list | rejectattr('state', 'equalto', 'absent') | list }}"
     groups_explicit_absent: "{{ groups_list | selectattr('state', 'equalto', 'absent') | list }}"
 
-- name: GROUPS - Build merged present list (explicit dicts + extracted names)
+- name: Build merged groups_present list
   ansible.builtin.set_fact:
     groups_present: >-
       {{
@@ -12,6 +12,6 @@
         + (identity_user_groups | default([]) if groups_enable_extract_from_users | bool else [])
       }}
 
-- name: GROUPS - Build absent list
+- name: Set groups_absent list
   ansible.builtin.set_fact:
     groups_absent: "{{ groups_explicit_absent | default([]) }}"

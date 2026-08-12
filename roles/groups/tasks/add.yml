@@ -1,5 +1,5 @@
 ---
-- name: GROUPS - Ensure present groups exist
+- name: Create present groups
   ansible.builtin.group:
     name: "{{ item.name | default(item) }}"
     gid: "{{ item.gid | default(omit) }}"

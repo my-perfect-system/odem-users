@@ -1,5 +1,5 @@
 ---
-- name: USERS - Assert supported OS
+- name: Assert Debian 13 target
   ansible.builtin.assert:
     that:
       - ansible_facts["distribution"] == "Debian"
@@ -7,10 +7,10 @@
     fail_msg: "This role supports Debian 13 (trixie) only"
     quiet: true
 
-- name: USERS - Compute per-user facts
+- name: Resolve user passwords
   ansible.builtin.include_tasks: facts.yml
-- name: USERS - Create users
+- name: Add present users
   ansible.builtin.include_tasks: add.yml
 
-- name: USERS - Delete users
+- name: Remove absent users
   ansible.builtin.include_tasks: del.yml

@@ -1,5 +1,5 @@
 ---
-- name: SSH - Ensure .ssh directory exists
+- name: Ensure per-user .ssh directory exists
   ansible.builtin.file:
     path: "{{ entity.home | default('/home/' ~ entity.name) }}/.ssh"
     state: directory
@@ -11,7 +11,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: SSH - Deploy SSH key files
+- name: Deploy per-user SSH private/public keys
   ansible.builtin.copy:
     dest: "{{ entity.0.home | default('/home/' ~ entity.0.name) }}/.ssh/{{ entity.1.name }}"
     content: "{{ entity.1.content if entity.1.content is defined else lookup('file', entity.1.path) }}"
@@ -22,7 +22,7 @@
   loop_control:
     loop_var: entity
 
-- name: SSH - Deploy authorized_keys per user
+- name: Deploy per-user authorized_keys
   ansible.builtin.include_tasks: authorized_keys.yml
   loop: "{{ identity_users_present | selectattr('authorized_keys', 'defined') | list }}"
   loop_control:

@@ -1,5 +1,5 @@
 ---
-- name: SUDO - Assert referenced sudo macros exist
+- name: Validate user sudo declarations
   ansible.builtin.assert:
     that:
       - entity.sudo.nopasswd | default(false) or (entity.sudo.macros | default([])) | length > 0
@@ -12,7 +12,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: SUDO - Create sudo macros file
+- name: Render sudo macros file
   ansible.builtin.template:
     src: macro.j2
     dest: "/etc/sudoers.d/00_macros"
@@ -23,7 +23,7 @@
   vars:
     macros: "{{ sudo_macros }}"
 
-- name: SUDO - Ensure sudoers file for each user
+- name: Render per-user sudoers files
   ansible.builtin.template:
     src: sudoers.j2
     dest: "/etc/sudoers.d/{{ entity.name | replace('.', '_') | replace('~', '_') }}"
@@ -38,7 +38,7 @@
   vars:
     user: "{{ entity }}"
 
-- name: SUDO - Add user to sudo system group
+- name: Add users to sudo group when requested
   ansible.builtin.user:
     name: "{{ entity.name }}"
     groups: sudo
@@ -49,7 +49,7 @@
     loop_var: entity
     label: "{{ entity.name }}"
 
-- name: SUDO - Remove user from sudo system group
+- name: Remove users from sudo group when not requested
   ansible.builtin.command:
     cmd: "gpasswd -d {{ entity.name }} sudo"
   register: sudo_group_remove

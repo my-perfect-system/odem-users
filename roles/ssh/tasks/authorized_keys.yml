@@ -1,5 +1,5 @@
 ---
-- name: SSH - Deploy authorized_keys file
+- name: Write authorized_keys for user
   ansible.builtin.copy:
     dest: "{{ entity.home | default('/home/' ~ entity.name) }}/.ssh/authorized_keys"
     content: "{{ ssh_auth_key_lines | join('\n') }}\n"

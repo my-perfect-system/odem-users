@@ -1,5 +1,5 @@
 ---
-- name: GROUPS - Remove absent groups
+- name: Remove absent groups
   ansible.builtin.group:
     name: "{{ item.name }}"
     state: absent

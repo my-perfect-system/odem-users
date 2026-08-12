@@ -1,5 +1,5 @@
 ---
-- name: USERS - Print passwords and hashes if needed
+- name: Debug user passwords when explicitly enabled
   ansible.builtin.debug:
     msg: |
       User {{ entity.name }}
@@ -18,14 +18,14 @@
 # usermod's process-busy check. Each change is only applied when the current
 # state differs (idempotent).
 
-- name: USERS - Gather root passwd entry
+- name: Read root passwd entry
   ansible.builtin.command: getent passwd root
   register: users_root_passwd
   changed_when: false
   check_mode: false
   when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
 
-- name: USERS - Gather root shadow entry
+- name: Read root shadow entry
   ansible.builtin.command: getent shadow root
   register: users_root_shadow
   changed_when: false
@@ -33,7 +33,7 @@
   no_log: true
   when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
 
-- name: USERS - Set root password via chpasswd
+- name: Set root password if changed
   ansible.builtin.command:
     cmd: chpasswd -e
     stdin: "root:{{ entity.password_hash }}"
@@ -47,7 +47,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: USERS - Set root shell via chsh
+- name: Set root shell if changed
   ansible.builtin.command:
     argv:
       - chsh
@@ -63,7 +63,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: USERS - Set root comment via chfn
+- name: Set root gecos comment if changed
   ansible.builtin.command:
     argv:
       - chfn
@@ -79,7 +79,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: USERS - Set root expiry via chage
+- name: Set root account expiration if changed
   ansible.builtin.command:
     argv:
       - chage
@@ -95,7 +95,7 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: USERS - Create non-root users with cleaned hashed passwords
+- name: Create non-root users
   ansible.builtin.user:
     name: "{{ entity.name }}"
     uid: "{{ entity.uid | default(omit) }}"

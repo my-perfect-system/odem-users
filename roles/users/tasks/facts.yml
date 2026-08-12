@@ -1,5 +1,5 @@
 ---
-- name: USERS - Build users list with passwords and hashes
+- name: Build password map for present users
   ansible.builtin.set_fact:
     users_with_passwords: "{{ users_with_passwords | default([]) + [user_with_pw] }}"
   vars:
@@ -21,6 +21,6 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: USERS - Replace users with updated version
+- name: Replace identity_users_present with password-bearing records
   ansible.builtin.set_fact:
     identity_users_present: "{{ users_with_passwords | default([]) }}"

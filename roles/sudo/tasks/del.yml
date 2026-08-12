@@ -1,5 +1,5 @@
 ---
-- name: SUDO - Remove sudoers file for absent users
+- name: Remove per-user sudoers files
   ansible.builtin.file:
     path: "/etc/sudoers.d/{{ item.name | replace('.', '_') | replace('~', '_') }}"
     state: absent
