@@ -9,5 +9,9 @@
 
 - name: Resolve authorized_keys per user
   ansible.builtin.include_tasks: facts.yml
+  loop: "{{ identity_users_present | selectattr('authorized_keys', 'defined') | list }}"
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
 - name: Configure SSH for present users
   ansible.builtin.include_tasks: add.yml
