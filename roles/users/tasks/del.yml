@@ -5,7 +5,7 @@
     state: "absent"
     remove: true
     force: true
-  loop: "{{ users_absent }}"
+  loop: "{{ identity_users_absent }}"
   loop_control:
     label: "{{ item.name }}"
 
@@ -13,6 +13,6 @@
   ansible.builtin.file:
     path: "{{ item.home | default('/home/' ~ item.name) }}"
     state: absent
-  loop: "{{ users_absent }}"
+  loop: "{{ identity_users_absent }}"
   loop_control:
     label: "{{ item.name }}"

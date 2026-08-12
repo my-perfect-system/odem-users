@@ -2,7 +2,7 @@
 galaxy_info:
   author: foo <bar@baz.com>
   description: "Manage Unix groups"
-  min_ansible_version: "2.20.0"
+  min_ansible_version: "2.16.0"
   license: GPL-3.0-or-later
   platforms:
     - name: Debian
@@ -17,4 +17,5 @@ galaxy_info:
     - accounts
 
     - mps-users
-dependencies: []
+dependencies:
+  - role: mps.base.identity

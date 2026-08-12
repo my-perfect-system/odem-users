@@ -6,7 +6,6 @@ users_enable_print_passwords_plaintext: false
 # fields (name, uid, group, shell, home, password, ssh_keys, sudo, ...).
 # The real OS username is taken from each entry's `name` field (defaulting to
 # the catalog key when omitted). Defined once, shared across all hosts.
-users_catalog: {}
 
 # Assignment list: per-host/per-group list of {name, state} pairs referencing
 # users_catalog entries by their unique id. No overrides; if a user needs
@@ -15,4 +14,3 @@ users_catalog: {}
 # Note: group creation is handled by the mps.users.groups role,
 #       SSH key deployment by the mps.users.ssh role,
 #       sudoers management by the mps.users.sudo role.
-users_list: []

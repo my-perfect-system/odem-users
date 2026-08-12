@@ -7,8 +7,5 @@
     fail_msg: "This role supports Debian 13 (trixie) only"
     quiet: true
 
-- name: SSH - Resolve users_list against users_catalog
-  ansible.builtin.include_tasks: resolve.yml
-
 - name: SSH - Deploy SSH keys and authorized_keys
   ansible.builtin.include_tasks: add.yml

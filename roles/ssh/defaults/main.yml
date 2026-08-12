@@ -1,4 +1,2 @@
 ---
 # Shared identity model (consumed by all mps.users roles)
-users_catalog: {}  # noqa var-naming[no-role-prefix]
-users_list: []  # noqa var-naming[no-role-prefix]

@@ -7,7 +7,7 @@
         + item.groups | default([])
         + ([item.group] if item.group is defined else [])
       }}
-  loop: "{{ groups_users_present | default([]) }}"
+  loop: "{{ identity_users_present | default([]) }}"
   loop_control:
     label: "{{ item.name | default('unnamed') }}"
   when: groups_enable_extract_from_users | bool

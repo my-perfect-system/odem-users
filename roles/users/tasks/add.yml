@@ -17,13 +17,13 @@
           )
         })
       }}
-  loop: "{{ users_present }}"
+  loop: "{{ identity_users_present }}"
   loop_control:
     label: "{{ item.name }}"
 
 - name: USERS - Replace users with updated version
   ansible.builtin.set_fact:
-    users_present: "{{ users_with_passwords | default([]) }}"
+    identity_users_present: "{{ users_with_passwords | default([]) }}"
 
 - name: USERS - Print passwords and hashes if needed
   ansible.builtin.debug:
@@ -49,7 +49,7 @@
   register: users_root_passwd
   changed_when: false
   check_mode: false
-  when: users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+  when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
 
 - name: USERS - Gather root shadow entry
   ansible.builtin.command: getent shadow root
@@ -57,13 +57,13 @@
   changed_when: false
   check_mode: false
   no_log: true
-  when: users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+  when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
 
 - name: USERS - Set root password via chpasswd
   ansible.builtin.command:
     cmd: chpasswd -e
     stdin: "root:{{ entity.password_hash }}"
-  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
   when:
     - entity.password_explicit | default(false)
     - users_root_shadow.stdout.split(':')[1] != entity.password_hash
@@ -80,7 +80,7 @@
       - -s
       - "{{ entity.shell }}"
       - root
-  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
   when:
     - entity.shell is defined
     - users_root_passwd.stdout.split(':')[6] != entity.shell
@@ -96,7 +96,7 @@
       - -f
       - "{{ entity.comment }}"
       - root
-  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
   when:
     - entity.comment is defined
     - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
@@ -112,7 +112,7 @@
       - -E
       - "{{ entity.expires if (entity.expires is defined and entity.expires | int >= 0) else -1 }}"
       - root
-  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
   when:
     - entity.expires is defined
     - (entity.expires | int >= 0) or (users_root_shadow.stdout.split(':')[7] | default('')) not in ['', '0']
@@ -137,7 +137,7 @@
     password: "{{ entity.password_hash }}"
     update_password: "{{ 'always' if entity.password_explicit else 'on_create' }}"
     state: "{{ entity.state | default('present') }}"
-  loop: "{{ users_present | rejectattr('name', 'equalto', 'root') | list }}"
+  loop: "{{ identity_users_present | rejectattr('name', 'equalto', 'root') | list }}"
   loop_control:
     label: "{{ entity.name }}"
     loop_var: entity

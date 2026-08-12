@@ -1,7 +1,5 @@
 ---
 # Shared identity model (consumed by all mps.users roles)
-users_catalog: {}  # noqa var-naming[no-role-prefix]
-users_list: []  # noqa var-naming[no-role-prefix]
 
 # Mapping of Cmnd_Alias names to lists of command patterns rendered into
 # /etc/sudoers.d/00_macros.

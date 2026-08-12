@@ -6,7 +6,7 @@
       - (entity.sudo.macros | default([])) is subset(sudo_macros.keys())
     fail_msg: "user '{{ entity.name }}' declares sudo.macros that are empty or not defined in sudo_macros"
     quiet: true
-  loop: "{{ sudo_users_present }}"
+  loop: "{{ identity_users_present }}"
   when: entity.sudo is defined
   loop_control:
     label: "{{ entity.name }}"
@@ -32,7 +32,7 @@
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
   when: entity.sudo is defined
-  loop: "{{ sudo_users_present }}"
+  loop: "{{ identity_users_present }}"
   loop_control:
     loop_var: entity
   vars:
@@ -43,7 +43,7 @@
     name: "{{ entity.name }}"
     groups: sudo
     append: true
-  loop: "{{ sudo_users_present }}"
+  loop: "{{ identity_users_present }}"
   when: entity.sudo.group | default(false)
   loop_control:
     loop_var: entity
@@ -57,7 +57,7 @@
   failed_when:
     - sudo_group_remove.rc != 0
     - '"is not a member of" not in sudo_group_remove.stderr | default("")'
-  loop: "{{ sudo_users_present }}"
+  loop: "{{ identity_users_present }}"
   when:
     - entity.sudo.group is defined
     - not (entity.sudo.group | default(false))
