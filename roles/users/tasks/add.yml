@@ -18,82 +18,83 @@
 # usermod's process-busy check. Each change is only applied when the current
 # state differs (idempotent).
 
-- name: Read root passwd entry
-  ansible.builtin.command: getent passwd root
-  register: users_root_passwd
-  changed_when: false
-  check_mode: false
+- name: Apply root special-path changes
   when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+  block:
+    - name: Read root passwd entry
+      ansible.builtin.command: getent passwd root
+      register: users_root_passwd
+      changed_when: false
+      check_mode: false
 
-- name: Read root shadow entry
-  ansible.builtin.command: getent shadow root
-  register: users_root_shadow
-  changed_when: false
-  check_mode: false
-  no_log: true
-  when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+    - name: Read root shadow entry
+      ansible.builtin.command: getent shadow root
+      register: users_root_shadow
+      changed_when: false
+      check_mode: false
+      no_log: true
 
-- name: Set root password if changed
-  ansible.builtin.command:
-    cmd: chpasswd -e
-    stdin: "root:{{ entity.password_hash }}"
-  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
-  when:
-    - entity.password_explicit | default(false)
-    - users_root_shadow.stdout.split(':')[1] != entity.password_hash
-  no_log: true
-  changed_when: true
-  loop_control:
-    label: "{{ entity.name }}"
-    loop_var: entity
+    - name: Set root password if changed
+      ansible.builtin.command:
+        cmd: chpasswd -e
+        stdin: "root:{{ entity.password_hash }}"
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.password_explicit | default(false)
+        - users_root_shadow.stdout.split(':')[1] != entity.password_hash
+      no_log: true
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
 
-- name: Set root shell if changed
-  ansible.builtin.command:
-    argv:
-      - chsh
-      - -s
-      - "{{ entity.shell }}"
-      - root
-  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
-  when:
-    - entity.shell is defined
-    - users_root_passwd.stdout.split(':')[6] != entity.shell
-  changed_when: true
-  loop_control:
-    label: "{{ entity.name }}"
-    loop_var: entity
+    - name: Set root shell if changed
+      ansible.builtin.command:
+        argv:
+          - chsh
+          - -s
+          - "{{ entity.shell }}"
+          - root
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.shell is defined
+        - users_root_passwd.stdout.split(':')[6] != entity.shell
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
 
-- name: Set root gecos comment if changed
-  ansible.builtin.command:
-    argv:
-      - chfn
-      - -f
-      - "{{ entity.comment }}"
-      - root
-  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
-  when:
-    - entity.comment is defined
-    - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
-  changed_when: true
-  loop_control:
-    label: "{{ entity.name }}"
-    loop_var: entity
+    - name: Set root gecos comment if changed
+      ansible.builtin.command:
+        argv:
+          - chfn
+          - -f
+          - "{{ entity.comment }}"
+          - root
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.comment is defined
+        - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
 
-- name: Set root account expiration if changed
-  ansible.builtin.command:
-    argv:
-      - chage
-      - -E
-      - "{{ entity.expires if (entity.expires is defined and entity.expires | int >= 0) else -1 }}"
-      - root
-  loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
-  when:
-    - entity.expires is defined
-    - (entity.expires | int >= 0) or (users_root_shadow.stdout.split(':')[7] | default('')) not in ['', '0']
-  changed_when: true
-  loop_control:
-    label: "{{ entity.name }}"
-    loop_var: entity
+    - name: Set root account expiration if changed
+      ansible.builtin.command:
+        argv:
+          - chage
+          - -E
+          - "{{ entity.expires if (entity.expires is defined and entity.expires | int >= 0) else -1 }}"
+          - root
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.expires is defined
+        - (entity.expires | int >= 0) or (users_root_shadow.stdout.split(':')[7] | default('')) not in ['', '0']
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
 
 - name: Create non-root users
   ansible.builtin.user:

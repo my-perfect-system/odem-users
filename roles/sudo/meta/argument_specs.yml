@@ -2,9 +2,10 @@ argument_specs:
   main:
     short_description: Main entry point for the sudo role.
     description:
-    - Renders C(/etc/sudoers.d/00_macros) from C(sudo_macros).
-    - Renders per-user C(/etc/sudoers.d/<name>) files for users in C(users_list) whose
-      state is C(present) and which declare a C(sudo) sub-option.
+    - Manages per-user C(/etc/sudoers.d/<name>) entries via C(community.general.sudoers)
+      for users in C(users_list) whose state is C(present) and which declare a C(sudo)
+      sub-option. C(sudo.macros) references the C(sudo_macros) dict; the macros are
+      resolved inline to a flat command list per user.
     - Manages membership in the C(sudo) system group via C(sudo.group) in the catalog
       (adds user when true, removes when false).
     - Removes per-user sudoers files for users whose state is C(absent).
@@ -14,5 +15,6 @@ argument_specs:
       sudo_macros:
         type: dict
         required: false
-        description: Mapping of Cmnd_Alias names to lists of command patterns rendered
-          into C(/etc/sudoers.d/00_macros)
+        description: Mapping of macro names (referenced from C(sudo.macros) per user)
+          to lists of command patterns that get expanded inline into each per-user
+          sudoers file.

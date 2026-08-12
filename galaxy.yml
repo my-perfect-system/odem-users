@@ -28,3 +28,4 @@ build_ignore:
 dependencies:
   mps.base: ">=0.1.0"
   ansible.posix: ">=1.0.0"
+  community.general: ">=1.0.0"

@@ -12,31 +12,20 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-- name: Render sudo macros file
-  ansible.builtin.template:
-    src: macro.j2
-    dest: "/etc/sudoers.d/00_macros"
-    owner: root
-    group: root
-    mode: "0440"
-    validate: "/usr/sbin/visudo -cf %s"
-  vars:
-    macros: "{{ sudo_macros }}"
-
-- name: Render per-user sudoers files
-  ansible.builtin.template:
-    src: sudoers.j2
-    dest: "/etc/sudoers.d/{{ entity.name | replace('.', '_') | replace('~', '_') }}"
-    owner: root
-    group: root
-    mode: "0440"
-    validate: "/usr/sbin/visudo -cf %s"
+- name: Manage per-user sudoers rules
+  community.general.sudoers:
+    name: "{{ entity.name | replace('.', '_') | replace('~', '_') }}"
+    user: "{{ entity.name }}"
+    nopassword: "{{ entity.sudo.nopasswd | default(false) }}"
+    commands: "{{ entity.sudo.macros | default([])
+                | map('extract', sudo_macros) | flatten | unique
+                if not (entity.sudo.nopasswd | default(false)) else ['ALL'] }}"
+    validation: required
   when: entity.sudo is defined
   loop: "{{ identity_users_present }}"
   loop_control:
+    label: "{{ entity.name }}"
     loop_var: entity
-  vars:
-    user: "{{ entity }}"
 
 - name: Add users to sudo group when requested
   ansible.builtin.user:
