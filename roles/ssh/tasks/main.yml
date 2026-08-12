@@ -7,7 +7,7 @@
     fail_msg: "This role supports Debian 13 (trixie) only"
     quiet: true
 
-- name: SSH - Compute per-user data
-  ansible.builtin.include_tasks: compute.yml
+- name: SSH - Compute per-user facts
+  ansible.builtin.include_tasks: facts.yml
 - name: SSH - Deploy SSH keys and authorized_keys
   ansible.builtin.include_tasks: add.yml
