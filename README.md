@@ -15,10 +15,10 @@ See [`galaxy.yml`](galaxy.yml) for the canonical values.
 
 | Role | Purpose |
 |---|---|
-| `mps.users.users` | Create / remove Unix user accounts. Root special-path handling via `chpasswd` / `chsh` / `chfn` / `chage`. |
-| `mps.users.groups` | Add / remove Unix groups; flat list of referenced groups built per-user. |
-| `mps.users.ssh` | Deploy SSH keys + authorized_keys per user. |
-| `mps.users.sudo` | Per-user sudoers management via `community.general.sudoers`. |
+| [`mps.users.users`](roles/users/README.md) | Create / remove Unix user accounts. Root special-path handling via `chpasswd` / `chsh` / `chfn` / `chage`. |
+| [`mps.users.groups`](roles/groups/README.md) | Add / remove Unix groups; flat list of referenced groups built per-user. |
+| [`mps.users.ssh`](roles/ssh/README.md) | Deploy SSH keys + authorized_keys per user. |
+| [`mps.users.sudo`](roles/sudo/README.md) | Per-user sudoers management via `community.general.sudoers`. |
 
 ## Required catalog input
 
