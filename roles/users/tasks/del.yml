@@ -1,0 +1,18 @@
+---
+- name: USERS - Remove users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    state: "absent"
+    remove: true
+    force: true
+  loop: "{{ users_absent }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: USERS - Remove leftover home directories
+  ansible.builtin.file:
+    path: "{{ item.home | default('/home/' ~ item.name) }}"
+    state: absent
+  loop: "{{ users_absent }}"
+  loop_control:
+    label: "{{ item.name }}"

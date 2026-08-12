@@ -1,0 +1,143 @@
+---
+- name: USERS - Build users list with passwords and hashes
+  ansible.builtin.set_fact:
+    users_with_passwords: "{{ users_with_passwords | default([]) + [user_with_pw] }}"
+  vars:
+    generated_pw: >-
+      {{ (item.password if (item.password is defined and item.password | length > 0)
+         else lookup('password', '/dev/null length=16 chars=ascii_letters,digits,punctuation')) | trim }}
+    user_with_pw: >-
+      {{
+        item | combine({
+          'password_plain': generated_pw,
+          'password_explicit': (item.password is defined and item.password | length > 0),
+          'password_hash': (
+            generated_pw if generated_pw.startswith('$6$')
+            else generated_pw | password_hash('sha512', item.name | hash('sha256') | truncate(16, true, ''))
+          )
+        })
+      }}
+  loop: "{{ users_present }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: USERS - Replace users with updated version
+  ansible.builtin.set_fact:
+    users_present: "{{ users_with_passwords | default([]) }}"
+
+- name: USERS - Print passwords and hashes if needed
+  ansible.builtin.debug:
+    msg: |
+      User {{ entity.name }}
+        Original  : '{{ entity.password }}'
+        Plaintext : '{{ entity.password_plain }}'
+        Hash      : '{{ entity.password_hash }}'
+  loop: "{{ users_with_passwords }}"
+  when: users_print_passwords_plaintext
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+# Root requires special handling: usermod refuses to modify root because root
+# is always running PID 1 ("usermod: user root is currently used by process 1").
+# Apply root's attributes via chpasswd/chsh/chfn/chage, which do not invoke
+# usermod's process-busy check. Each change is only applied when the current
+# state differs (idempotent).
+
+- name: USERS - Gather root passwd entry
+  ansible.builtin.command: getent passwd root
+  register: users_root_passwd
+  changed_when: false
+  check_mode: false
+  when: users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+
+- name: USERS - Gather root shadow entry
+  ansible.builtin.command: getent shadow root
+  register: users_root_shadow
+  changed_when: false
+  check_mode: false
+  no_log: true
+  when: users_present | selectattr('name', 'equalto', 'root') | list | length > 0
+
+- name: USERS - Set root password via chpasswd
+  ansible.builtin.command:
+    cmd: chpasswd -e
+    stdin: "root:{{ entity.password_hash }}"
+  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  when:
+    - entity.password_explicit | default(false)
+    - users_root_shadow.stdout.split(':')[1] != entity.password_hash
+  no_log: true
+  changed_when: true
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: USERS - Set root shell via chsh
+  ansible.builtin.command:
+    argv:
+      - chsh
+      - -s
+      - "{{ entity.shell }}"
+      - root
+  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  when:
+    - entity.shell is defined
+    - users_root_passwd.stdout.split(':')[6] != entity.shell
+  changed_when: true
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: USERS - Set root comment via chfn
+  ansible.builtin.command:
+    argv:
+      - chfn
+      - -f
+      - "{{ entity.comment }}"
+      - root
+  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  when:
+    - entity.comment is defined
+    - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
+  changed_when: true
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: USERS - Set root expiry via chage
+  ansible.builtin.command:
+    argv:
+      - chage
+      - -E
+      - "{{ entity.expires if (entity.expires is defined and entity.expires | int >= 0) else -1 }}"
+      - root
+  loop: "{{ users_present | selectattr('name', 'equalto', 'root') | list }}"
+  when:
+    - entity.expires is defined
+    - (entity.expires | int >= 0) or (users_root_shadow.stdout.split(':')[7] | default('')) not in ['', '0']
+  changed_when: true
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: USERS - Create non-root users with cleaned hashed passwords
+  ansible.builtin.user:
+    name: "{{ entity.name }}"
+    uid: "{{ entity.uid | default(omit) }}"
+    group: "{{ entity.group | default(omit) }}"
+    groups: "{{ entity.groups | default(omit) }}"
+    append: "{{ entity.append_groups | default(omit) }}"
+    comment: "{{ entity.comment | default(omit) }}"
+    shell: "{{ entity.shell | default(omit) }}"
+    home: "{{ entity.home | default(omit) }}"
+    create_home: "{{ entity.create_home | default(omit) }}"
+    system: "{{ entity.system | default(omit) }}"
+    expires: "{{ entity.expires | default(omit) }}"
+    password: "{{ entity.password_hash }}"
+    update_password: "{{ 'always' if entity.password_explicit else 'on_create' }}"
+    state: "{{ entity.state | default('present') }}"
+  loop: "{{ users_present | rejectattr('name', 'equalto', 'root') | list }}"
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity

@@ -1,0 +1,20 @@
+---
+- name: GROUPS - Assert supported OS
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Debian"
+      - ansible_facts["distribution_major_version"] | int == 13
+    fail_msg: "This role supports Debian 13 (trixie) only"
+    quiet: true
+
+- name: GROUPS - Resolve users_list against users_catalog
+  ansible.builtin.include_tasks: resolve.yml
+
+- name: GROUPS - Prepare group facts
+  ansible.builtin.include_tasks: facts.yml
+
+- name: GROUPS - Persist groups
+  ansible.builtin.include_tasks: add.yml
+
+- name: GROUPS - Remove groups
+  ansible.builtin.include_tasks: del.yml

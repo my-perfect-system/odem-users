@@ -1,0 +1,66 @@
+---
+- name: SUDO - Assert referenced sudo macros exist
+  ansible.builtin.assert:
+    that:
+      - entity.sudo.nopasswd | default(false) or (entity.sudo.macros | default([])) | length > 0
+      - (entity.sudo.macros | default([])) is subset(sudo_macros.keys())
+    fail_msg: "user '{{ entity.name }}' declares sudo.macros that are empty or not defined in sudo_macros"
+    quiet: true
+  loop: "{{ sudo_users_present }}"
+  when: entity.sudo is defined
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: SUDO - Create sudo macros file
+  ansible.builtin.template:
+    src: macro.j2
+    dest: "/etc/sudoers.d/00_macros"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  vars:
+    macros: "{{ sudo_macros }}"
+
+- name: SUDO - Ensure sudoers file for each user
+  ansible.builtin.template:
+    src: sudoers.j2
+    dest: "/etc/sudoers.d/{{ entity.name | replace('.', '_') | replace('~', '_') }}"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  when: entity.sudo is defined
+  loop: "{{ sudo_users_present }}"
+  loop_control:
+    loop_var: entity
+  vars:
+    user: "{{ entity }}"
+
+- name: SUDO - Add user to sudo system group
+  ansible.builtin.user:
+    name: "{{ entity.name }}"
+    groups: sudo
+    append: true
+  loop: "{{ sudo_users_present }}"
+  when: entity.sudo.group | default(false)
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+
+- name: SUDO - Remove user from sudo system group
+  ansible.builtin.command:
+    cmd: "gpasswd -d {{ entity.name }} sudo"
+  register: sudo_group_remove
+  changed_when: sudo_group_remove.rc == 0
+  failed_when:
+    - sudo_group_remove.rc != 0
+    - '"is not a member of" not in sudo_group_remove.stderr | default("")'
+  loop: "{{ sudo_users_present }}"
+  when:
+    - entity.sudo.group is defined
+    - not (entity.sudo.group | default(false))
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"

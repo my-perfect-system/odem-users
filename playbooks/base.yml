@@ -1,0 +1,9 @@
+---
+- name: Users base install
+  hosts: all
+  become: true
+  roles:
+    - role: mps.users.users
+    - role: mps.users.groups
+    - role: mps.users.ssh
+    - role: mps.users.sudo

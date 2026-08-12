@@ -1,0 +1,30 @@
+---
+- name: SSH - Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: "{{ entity.home | default('/home/' ~ entity.name) }}/.ssh"
+    state: directory
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0700"
+  loop: "{{ ssh_users_present }}"
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity
+
+- name: SSH - Deploy SSH key files
+  ansible.builtin.copy:
+    dest: "{{ entity.0.home | default('/home/' ~ entity.0.name) }}/.ssh/{{ entity.1.name }}"
+    content: "{{ entity.1.content if entity.1.content is defined else lookup('file', entity.1.path) }}"
+    owner: "{{ entity.0.name }}"
+    group: "{{ entity.0.group | default(entity.0.name) }}"
+    mode: "0600"
+  loop: "{{ ssh_users_present | subelements('ssh_keys', skip_missing=True) }}"
+  loop_control:
+    loop_var: entity
+
+- name: SSH - Deploy authorized_keys per user
+  ansible.builtin.include_tasks: authorized_keys.yml
+  loop: "{{ ssh_users_present | selectattr('authorized_keys', 'defined') | list }}"
+  loop_control:
+    label: "{{ entity.name }}"
+    loop_var: entity

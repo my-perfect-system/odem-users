@@ -1,0 +1,19 @@
+---
+- name: SSH - Reset authorized_keys lines
+  ansible.builtin.set_fact:
+    ssh_auth_key_lines: []
+
+- name: SSH - Assemble authorized_keys lines
+  ansible.builtin.set_fact:
+    ssh_auth_key_lines: "{{ ssh_auth_key_lines | default([]) + [line] }}"
+  vars:
+    line: "{{ item.content if item.content is defined else lookup('file', item.path) }}"
+  loop: "{{ entity.authorized_keys }}"
+
+- name: SSH - Deploy authorized_keys file
+  ansible.builtin.copy:
+    dest: "{{ entity.home | default('/home/' ~ entity.name) }}/.ssh/authorized_keys"
+    content: "{{ ssh_auth_key_lines | join('\n') }}\n"
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0600"

@@ -1,0 +1,14 @@
+---
+- name: SSH - Assert supported OS
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Debian"
+      - ansible_facts["distribution_major_version"] | int == 13
+    fail_msg: "This role supports Debian 13 (trixie) only"
+    quiet: true
+
+- name: SSH - Resolve users_list against users_catalog
+  ansible.builtin.include_tasks: resolve.yml
+
+- name: SSH - Deploy SSH keys and authorized_keys
+  ansible.builtin.include_tasks: add.yml

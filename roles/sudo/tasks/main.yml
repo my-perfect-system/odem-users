@@ -1,0 +1,17 @@
+---
+- name: SUDO - Assert supported OS
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Debian"
+      - ansible_facts["distribution_major_version"] | int == 13
+    fail_msg: "This role supports Debian 13 (trixie) only"
+    quiet: true
+
+- name: SUDO - Resolve users_list against users_catalog
+  ansible.builtin.include_tasks: resolve.yml
+
+- name: SUDO - Render sudoers files
+  ansible.builtin.include_tasks: add.yml
+
+- name: SUDO - Remove sudoers files for absent users
+  ansible.builtin.include_tasks: del.yml

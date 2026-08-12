@@ -1,0 +1,56 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for the users role.
+    description:
+      - Manages Linux user accounts on Debian 13.
+      - Reads C(users_catalog) (identity dict keyed by unique id) and C(users_list) (assignment list of name + state pairs).
+      - Each users_list entry references a catalog entry by its key (the unique id).
+      - The catalog entry provides all identity fields, including the real OS username via C(name).
+      - "Missing catalog entries fail the role for entries with C(state: present)."
+      - "Entries with C(state: absent) do not require a catalog entry; the id is used as the username for deletion."
+      - SSH key deployment is handled by the separate C(mps.users.ssh) role, which reads the same C(users_catalog)/C(users_list).
+      - Sudoers management is handled by the separate C(mps.users.sudo) role, which reads the same C(users_catalog)/C(users_list).
+    options:
+      users_catalog:
+        type: dict
+        default: {}
+        description:
+          - Identity catalog keyed by a free-form unique id. Keys are NOT
+            validated against a fixed set; they are only used to reference
+            entries from C(users_list).
+          - The real OS username is taken from each entry's C(name) field. If
+            C(name) is omitted, it defaults to the catalog key (the unique id),
+            so catalogs that do not distinguish id from username keep working.
+          - Each value is a dict of identity fields consumed by the
+            users/groups/ssh/sudo roles. Supported fields per entry include
+            C(name) (str, the OS username; defaults to the catalog key),
+            C(uid) (int), C(group) (str), C(groups) (list[str]),
+            C(append_groups) (bool), C(comment) (str), C(shell) (str),
+            C(home) (str), C(create_home) (bool), C(system) (bool),
+            C(expires) (float), C(password) (str), C(ssh_keys) (list[dict]),
+            C(authorized_keys) (list[dict]), and C(sudo) (dict with
+            C(nopasswd) bool and C(macros) list[str]).
+      users_list:
+        type: list
+        default: []
+        description:
+          - Assignment list. Each entry references a C(users_catalog) key (the unique id) via C(name) and sets C(state).
+          - No other fields are read from users_list entries; all identity (including the real OS username) comes from the catalog.
+        elements: dict
+        options:
+          name:
+            type: str
+            required: true
+            description:
+              - Unique id of the user. Must match a key in C(users_catalog).
+              - The actual OS username is read from the catalog entry's C(name) field (defaulting to this id).
+          state:
+            type: str
+            choices: [present, absent]
+            default: present
+            description: Whether the user should exist on this host.
+      users_print_passwords_plaintext:
+        type: bool
+        default: false
+        description: Print generated passwords and hashes to stdout (debug only).

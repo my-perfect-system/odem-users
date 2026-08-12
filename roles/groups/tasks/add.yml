@@ -1,0 +1,10 @@
+---
+- name: GROUPS - Ensure present groups exist
+  ansible.builtin.group:
+    name: "{{ item.name | default(item) }}"
+    gid: "{{ item.gid | default(omit) }}"
+    system: "{{ item.system | default(omit) }}"
+    state: present
+  loop: "{{ groups_present }}"
+  loop_control:
+    label: "{{ item.name | default(item) }}"

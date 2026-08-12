@@ -1,0 +1,45 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for the groups role.
+    description:
+      - Manages Linux groups on Debian 13.
+      - Reads C(users_catalog) and C(users_list); resolves catalog references (same as the users role).
+      - Extracts group names from each resolved present user's C(group) and C(groups) fields and creates them.
+      - Also accepts an explicit C(groups_list) list of dicts for standalone group management (with state, gid, system).
+      - This role declares C(mps.users.users) as a dependency, so invoking C(mps.users.groups) automatically runs the users role first.
+    options:
+      users_catalog:
+        type: dict
+        default: {}
+        description: Identity catalog keyed by unique id (see the users role).
+      users_list:
+        type: list
+        default: []
+        description: Assignment list of name + state pairs referencing users_catalog entries by their unique id (see the users role).
+        elements: dict
+      groups_list:
+        type: list
+        default: []
+        elements: dict
+        description: Explicit list of group dicts to manage. Each entry supports the sub-options below.
+        options:
+          name:
+            type: str
+            required: true
+            description: Group name.
+          state:
+            type: str
+            choices: [present, absent]
+            default: present
+            description: Whether the group should exist.
+          gid:
+            type: int
+            description: Numeric GID.
+          system:
+            type: bool
+            description: Create as system group.
+      groups_extract_from_users:
+        type: bool
+        default: true
+        description: When true, scan resolved users and extract each user's C(group) and C(groups) fields as groups to ensure-present.

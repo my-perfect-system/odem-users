@@ -1,0 +1,35 @@
+---
+- name: GROUPS - Collect groups from resolved users
+  ansible.builtin.set_fact:
+    groups_from_users: >-
+      {{
+        groups_from_users | default([])
+        + item.groups | default([])
+        + ([item.group] if item.group is defined else [])
+      }}
+  loop: "{{ groups_users_present | default([]) }}"
+  loop_control:
+    label: "{{ item.name | default('unnamed') }}"
+  when: groups_extract_from_users | bool
+
+- name: GROUPS - Deduplicate extracted group names
+  ansible.builtin.set_fact:
+    groups_from_users: "{{ groups_from_users | default([]) | unique }}"
+  when: groups_extract_from_users | bool
+
+- name: GROUPS - Split explicit list into present and absent
+  ansible.builtin.set_fact:
+    groups_explicit_present: "{{ groups_list | rejectattr('state', 'equalto', 'absent') | list }}"
+    groups_explicit_absent: "{{ groups_list | selectattr('state', 'equalto', 'absent') | list }}"
+
+- name: GROUPS - Build merged present list (explicit dicts + extracted names)
+  ansible.builtin.set_fact:
+    groups_present: >-
+      {{
+        (groups_explicit_present | default([]))
+        + (groups_from_users | default([]))
+      }}
+
+- name: GROUPS - Build absent list
+  ansible.builtin.set_fact:
+    groups_absent: "{{ groups_explicit_absent | default([]) }}"

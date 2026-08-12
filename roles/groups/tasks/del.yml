@@ -1,0 +1,8 @@
+---
+- name: GROUPS - Remove absent groups
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ groups_absent }}"
+  loop_control:
+    label: "{{ item.name }}"
