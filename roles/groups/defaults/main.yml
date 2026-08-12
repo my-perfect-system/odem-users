@@ -1,11 +1,18 @@
 ---
+
+# Feature toggles — naming pattern: <rolename>_enable_<feature>
+
+# When true, the role also scans users_list and extracts each user's
+# `group` and `groups` fields as groups to ensure-present.
+
+groups_enable_extract_from_users: true
+
+# Regular configuration
+
 # Explicit groups list. Each entry is a dict:
 #   name:    str (required)
 #   state:   str (present|absent, default present)
 #   gid:     int (optional)
 #   system:  bool (optional)
-groups_list: []
 
-# When true, the role also scans users_list and extracts each user's
-# `group` and `groups` fields as groups to ensure-present.
-groups_enable_extract_from_users: true
+groups_list: []

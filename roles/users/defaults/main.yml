@@ -1,3 +1,7 @@
 ---
+
+# Feature toggles — naming pattern: <rolename>_enable_<feature>
+
 # Print passwords being generated in plain text to stdout
+
 users_enable_print_passwords_plaintext: false
