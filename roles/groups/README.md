@@ -17,7 +17,7 @@ Main entry point for the groups role.
 
 ## Dependencies
 
-- `odem.base.assert_debian13`
+- `odem.base.common`
 - `odem.base.identity`
 
 ## Example usage

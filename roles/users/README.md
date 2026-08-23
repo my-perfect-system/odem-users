@@ -16,7 +16,7 @@ Main entry point for the users role.
 
 ## Dependencies
 
-- `odem.base.assert_debian13`
+- `odem.base.common`
 - `odem.users.groups`
 - `odem.base.identity`
 

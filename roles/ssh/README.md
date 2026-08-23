@@ -10,7 +10,7 @@ Main entry point for the ssh role.
 
 ## Dependencies
 
-- `odem.base.assert_debian13`
+- `odem.base.common`
 - `odem.base.identity`
 
 ## Example usage

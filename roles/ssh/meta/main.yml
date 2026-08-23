@@ -18,5 +18,5 @@ galaxy_info:
 
     - odem-users
 dependencies:
-  - role: odem.base.assert_debian13
+  - role: odem.base.common
   - role: odem.base.identity
