@@ -1,0 +1,7 @@
+---
+# Fragment for the common → identity merge.
+# Compiles into changelogs/changelog.yaml at release time.
+minor_changes:
+  - |
+    Dropped the redundant `odem.base.common` meta dependency from `users`,
+    `groups`, `ssh`, and `sudo` — `odem.base.identity` already covers it.

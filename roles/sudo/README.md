@@ -16,7 +16,6 @@ Main entry point for the sudo role.
 
 ## Dependencies
 
-- `odem.base.common`
 - `odem.base.identity`
 
 ## Example usage

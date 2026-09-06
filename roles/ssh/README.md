@@ -10,7 +10,6 @@ Main entry point for the ssh role.
 
 ## Dependencies
 
-- `odem.base.common`
 - `odem.base.identity`
 
 ## Example usage

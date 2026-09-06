@@ -22,7 +22,7 @@ dependency) for its own opt-in users.
 
 ## Dependencies on `odem.base`
 
-- Every role in this collection declares `odem.base.common` + `odem.base.identity` in `meta/main.yml`.
+- Every role in this collection declares `odem.base.identity` in `meta/main.yml`.
 - Role execution is gated by each role's `user_roles.<key>` flag (denylist model).
 
 ## Conventions

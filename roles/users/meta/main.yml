@@ -19,6 +19,5 @@ galaxy_info:
 
     - odem-users
 dependencies:
-  - role: odem.base.common
   - role: odem.users.groups
   - role: odem.base.identity
