@@ -12,11 +12,12 @@
     label: "{{ entity.name }}"
     loop_var: entity
 
-# Root requires special handling: usermod refuses to modify root because root
-# is always running PID 1 ("usermod: user root is currently used by process 1").
-# Apply root's attributes via chpasswd/chsh/chfn/chage, which do not invoke
-# usermod's process-busy check. Each change is only applied when the current
-# state differs (idempotent).
+# Root requires special handling: on Debian, usermod refuses to modify root
+# because root is always running PID 1 ("usermod: user root is currently used
+# by process 1") — apply root's attributes via chpasswd/chsh/chfn/chage instead.
+# On Fedora 45+, chfn/chsh were removed from shadow-utils — use usermod -c/-s
+# there (Fedora's usermod permits modifying root). chpasswd/chage work on both.
+# Each change is only applied when the current state differs (idempotent).
 
 - name: Apply root special-path changes
   when: identity_users_present | selectattr('name', 'equalto', 'root') | list | length > 0
@@ -48,7 +49,7 @@
         label: "{{ entity.name }}"
         loop_var: entity
 
-    - name: Set root shell if changed
+    - name: Set root shell if changed (Debian)
       ansible.builtin.command:
         argv:
           - chsh
@@ -59,12 +60,30 @@
       when:
         - entity.shell is defined
         - users_root_passwd.stdout.split(':')[6] != entity.shell
+        - ansible_facts['os_family'] == 'Debian'
       changed_when: true
       loop_control:
         label: "{{ entity.name }}"
         loop_var: entity
 
-    - name: Set root gecos comment if changed
+    - name: Set root shell if changed (RedHat)
+      ansible.builtin.command:
+        argv:
+          - usermod
+          - -s
+          - "{{ entity.shell }}"
+          - root
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.shell is defined
+        - users_root_passwd.stdout.split(':')[6] != entity.shell
+        - ansible_facts['os_family'] == 'RedHat'
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
+
+    - name: Set root gecos comment if changed (Debian)
       ansible.builtin.command:
         argv:
           - chfn
@@ -75,6 +94,24 @@
       when:
         - entity.comment is defined
         - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
+        - ansible_facts['os_family'] == 'Debian'
+      changed_when: true
+      loop_control:
+        label: "{{ entity.name }}"
+        loop_var: entity
+
+    - name: Set root gecos comment if changed (RedHat)
+      ansible.builtin.command:
+        argv:
+          - usermod
+          - -c
+          - "{{ entity.comment }}"
+          - root
+      loop: "{{ identity_users_present | selectattr('name', 'equalto', 'root') | list }}"
+      when:
+        - entity.comment is defined
+        - users_root_passwd.stdout.split(':')[4].split(',')[0] != entity.comment
+        - ansible_facts['os_family'] == 'RedHat'
       changed_when: true
       loop_control:
         label: "{{ entity.name }}"
