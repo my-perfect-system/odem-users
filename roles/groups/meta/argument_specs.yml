@@ -2,7 +2,7 @@ argument_specs:
   main:
     short_description: Main entry point for the groups role.
     description:
-    - Manages Linux groups on Debian 13.
+    - Manages Linux groups across Debian and RedHat family distributions.
     - Reads C(users_catalog) and C(users_list); resolves catalog references (same
       as the users role).
     - Extracts group names from each resolved present user's C(group) and C(groups)

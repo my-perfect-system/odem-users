@@ -2,7 +2,9 @@
 # Shared identity model (consumed by all odem.users roles)
 
 # Mapping of Cmnd_Alias names to lists of command patterns rendered into
-# /etc/sudoers.d/00_macros.
+# the shared macros file (sudo_macros_file, default /etc/sudoers.d/00_macros).
+# Per-user sudoers files reference the aliases by name instead of expanding
+# the command lists inline.
 sudo_macros:
   ADMIN_DEFAULT:
     - "/usr/bin/apt"
@@ -44,3 +46,7 @@ sudo_macros:
     - "/usr/sbin/brctl *"
   ADMIN_MINIMAL:
     - "/usr/bin/su -"
+
+# Shared macros file — every Cmnd_Alias from sudo_macros is rendered here.
+# Per-user sudoers files only reference the alias names.
+sudo_macros_file: "/etc/sudoers.d/00_macros"

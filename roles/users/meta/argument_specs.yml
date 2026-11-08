@@ -2,7 +2,7 @@ argument_specs:
   main:
     short_description: Main entry point for the users role.
     description:
-    - Manages Linux user accounts on Debian 13.
+    - Manages Linux user accounts across Debian and RedHat family distributions.
     - Reads C(users_catalog) (identity dict keyed by unique id) and C(users_list)
       (assignment list of name + state pairs).
     - Each users_list entry references a catalog entry by its key (the unique id).

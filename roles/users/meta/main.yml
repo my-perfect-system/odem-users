@@ -8,15 +8,18 @@ galaxy_info:
     - name: Debian
       versions:
         - trixie
+    - name: Fedora
+      versions:
+        - "45"
   galaxy_tags:
     - debian
     - debian13
     - trixie
+    - fedora
     - users
     - ssh
     - sudo
     - accounts
-
     - odem-users
 dependencies:
   - role: odem.users.groups
